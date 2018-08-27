@@ -23,7 +23,15 @@ class Where extends AbstractQuery {
         if(is_array($value)) {
             $query = '';
             foreach($value as $field => $fieldValue) {
-                $expr = '= :' . $field;
+                $expr = '';
+                $fieldParts = explode(' ', $field, 2);
+                if(count($fieldParts) === 2) {
+                    $field = $fieldParts[0];
+                    $expr .= $fieldParts[1] . ' ';
+                } else {
+                    $expr .= '= ';
+                }
+                $expr .= ':' . $field;
                 if(is_array($fieldValue)) {
                     $expr = 'IN (' . $this->parseArray($field, $fieldValue).')';
                 } else if($fieldValue instanceof QueryInterface) {

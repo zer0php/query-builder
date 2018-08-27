@@ -14,4 +14,9 @@ class SelectTest extends TestCase {
         $select = new Select('*');
         $this->assertEquals('SELECT * FROM table', $select->from('table').'');
     }
+
+    public function test_From_WithAllFieldAndTableAndWhere_ReturnsFullQuery() {
+        $select = new Select('*');
+        $this->assertEquals('SELECT * FROM table WHERE id = :id', $select->from('table')->where(['id' => 1]).'');
+    }
 } 

@@ -21,4 +21,9 @@ class WhereTest extends TestCase {
         $where = new Where(['id' => [1, 2, 3]]);
         $this->assertEquals('WHERE id IN (:id0,:id1,:id2)', $where->toSql());
     }
+
+    public function test_toSql_WithLikeArrayData_ReturnsPreparedPartOfQuery() {
+        $where = new Where(['id LIKE' => '%1%']);
+        $this->assertEquals('WHERE id LIKE :id', $where->toSql());
+    }
 } 
