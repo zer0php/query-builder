@@ -2,11 +2,10 @@
 
 namespace Zero\Database\Query;
 
-class Select implements QueryInterface {
-    use QueryPartTrait;
+class Select extends AbstractQuery implements QueryInterface {
     
     public function __construct($fields, QueryInterface $query = null) {
-        $this->set($fields, $query);
+        $this->setValue($fields, $query);
     }
     
     public function from($table) {
@@ -15,5 +14,10 @@ class Select implements QueryInterface {
     
     protected function getType() {
         return 'SELECT';
+    }
+
+    protected function parseValue($value)
+    {
+        return $value;
     }
 }

@@ -1,16 +1,17 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use Zero\Database\Query\Select;
 
 class SelectTest extends TestCase {
     
     public function test_toSql_WithTable_ReturnsPartOfQuery() {
-        $select = new \Zero\Database\Query\Select('field');
+        $select = new Select('field');
         $this->assertEquals('SELECT field', $select->toSql());
     }
     
     public function test_From_WithAllFieldAndTable_ReturnsFullQuery() {
-        $select = new \Zero\Database\Query\Select('*');
-        $this->assertEquals('SELECT * FROM table', $select->from('table')->toSql());
+        $select = new Select('*');
+        $this->assertEquals('SELECT * FROM table', $select->from('table').'');
     }
 } 
