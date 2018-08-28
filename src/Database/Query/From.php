@@ -21,7 +21,7 @@ class From extends AbstractQuery implements QueryInterface {
         return 'FROM';
     }
 
-    protected function parseValue($value, ValueBinder $generator)
+    protected function parseValue($value, NamedValueBinder $generator)
     {
         return $value;
     }

@@ -8,16 +8,16 @@ class Where extends AbstractQuery {
         $this->setValue($expr, $query);
     }
 
-    private function parseArray($field, array $values, ValueBinder $generator) {
-        $generator->add($field, $values);
-        return $generator->getParam($field);
+    private function parseArray($field, array $values, NamedValueBinder $generator) {
+        $generator->bind($field, $values);
+        return $generator->getPlaceholder($field);
     }
 
-    private function parseQuery(QueryInterface $query, ValueBinder $generator) {
+    private function parseQuery(QueryInterface $query, NamedValueBinder $generator) {
         return $query->toSql($generator);
     }
 
-    protected function parseValue($value, ValueBinder $generator) {
+    protected function parseValue($value, NamedValueBinder $generator) {
         if(is_array($value)) {
             $query = '';
             foreach($value as $field => $fieldValue) {
@@ -29,11 +29,13 @@ class Where extends AbstractQuery {
                 } else {
                     $expr .= '= ';
                 }
-                $expr .= ':' . $field;
                 if(is_array($fieldValue)) {
                     $expr = 'IN ' . $this->parseArray($field, $fieldValue, $generator);
                 } else if($fieldValue instanceof QueryInterface) {
                     $expr = 'IN (' . $this->parseQuery($fieldValue, $generator).')';
+                } else {
+                    $generator->bind($field, $fieldValue);
+                    $expr .= $generator->getPlaceholder($field);
                 }
                 $query .= $field . ' ' . $expr;
             }

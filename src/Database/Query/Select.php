@@ -16,7 +16,7 @@ class Select extends AbstractQuery implements QueryInterface {
         return 'SELECT';
     }
 
-    protected function parseValue($value, ValueBinder $generator)
+    protected function parseValue($value, NamedValueBinder $generator)
     {
         return $value;
     }
