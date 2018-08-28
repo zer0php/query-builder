@@ -19,7 +19,7 @@ class Where extends AbstractQuery {
 
     protected function parseValue($value, NamedValueBinder $generator) {
         if(is_array($value)) {
-            $query = '';
+            $conditions = [];
             foreach($value as $field => $fieldValue) {
                 $expr = '';
                 $fieldParts = explode(' ', $field, 2);
@@ -37,9 +37,9 @@ class Where extends AbstractQuery {
                     $generator->bind($field, $fieldValue);
                     $expr .= $generator->getPlaceholder($field);
                 }
-                $query .= $field . ' ' . $expr;
+                $conditions[] = $field . ' ' . $expr;
             }
-            $value = $query;
+            $value = implode(' AND ', $conditions);
         }
         return $value;
     }

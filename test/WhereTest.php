@@ -26,4 +26,9 @@ class WhereTest extends TestCase {
         $where = new Where(['id LIKE' => '%1%']);
         $this->assertEquals('WHERE id LIKE :id', $where.'');
     }
+
+    public function test_toSql_WithMultipleCondition_ReturnsPreparedPartOfQuery() {
+        $where = new Where(['name LIKE' => '%Joe%', 'age >' => 15, 'active' => 1]);
+        $this->assertEquals('WHERE name LIKE :name AND age > :age AND active = :active', $where.'');
+    }
 } 
