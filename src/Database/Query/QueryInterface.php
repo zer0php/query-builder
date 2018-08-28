@@ -3,5 +3,5 @@
 namespace Zero\Database\Query;
 
 interface QueryInterface {    
-    public function toSql();
+    public function toSql(ValueBinder $generator);
 }

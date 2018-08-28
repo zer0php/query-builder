@@ -8,18 +8,16 @@ class Where extends AbstractQuery {
         $this->setValue($expr, $query);
     }
 
-    private function parseArray($field, array $values) {
-        $ids = array_map(function($value) use($field) {
-            return $field . $value;
-        }, array_keys($values));
-        return $ids ? ':'.implode(',:', $ids) : '';
+    private function parseArray($field, array $values, ValueBinder $generator) {
+        $generator->add($field, $values);
+        return $generator->getParam($field);
     }
 
-    private function parseQuery(QueryInterface $query) {
-        return $query->toSql();
+    private function parseQuery(QueryInterface $query, ValueBinder $generator) {
+        return $query->toSql($generator);
     }
 
-    protected function parseValue($value) {
+    protected function parseValue($value, ValueBinder $generator) {
         if(is_array($value)) {
             $query = '';
             foreach($value as $field => $fieldValue) {
@@ -33,9 +31,9 @@ class Where extends AbstractQuery {
                 }
                 $expr .= ':' . $field;
                 if(is_array($fieldValue)) {
-                    $expr = 'IN (' . $this->parseArray($field, $fieldValue).')';
+                    $expr = 'IN ' . $this->parseArray($field, $fieldValue, $generator);
                 } else if($fieldValue instanceof QueryInterface) {
-                    $expr = 'IN (' . $this->parseQuery($fieldValue).')';
+                    $expr = 'IN (' . $this->parseQuery($fieldValue, $generator).')';
                 }
                 $query .= $field . ' ' . $expr;
             }

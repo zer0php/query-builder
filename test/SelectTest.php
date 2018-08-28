@@ -7,7 +7,7 @@ class SelectTest extends TestCase {
     
     public function test_toSql_WithTable_ReturnsPartOfQuery() {
         $select = new Select('field');
-        $this->assertEquals('SELECT field', $select->toSql());
+        $this->assertEquals('SELECT field', $select.'');
     }
     
     public function test_From_WithAllFieldAndTable_ReturnsFullQuery() {

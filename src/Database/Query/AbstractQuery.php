@@ -20,23 +20,23 @@ abstract class AbstractQuery implements QueryInterface
 
     abstract protected function getType();
 
-    abstract protected function parseValue($value);
+    abstract protected function parseValue($value, ValueBinder $generator);
 
     protected function setValue($value, QueryInterface $prevQuery = null) {
         $this->value = $value;
         $this->prevQuery = $prevQuery;
     }
 
-    public function toSql() {
+    public function toSql(ValueBinder $generator) {
         $query = '';
         if($this->prevQuery) {
-            $query .= $this->prevQuery->toSql() . ' ';
+            $query .= $this->prevQuery->toSql($generator) . ' ';
         }
-        $query .= $this->getType() . ' ' . $this->parseValue($this->value);
+        $query .= $this->getType() . ' ' . $this->parseValue($this->value, $generator);
         return $query;
     }
 
     public function __toString() {
-        return $this->toSql();
+        return $this->toSql(new ValueBinder());
     }
 }
