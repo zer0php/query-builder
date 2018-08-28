@@ -10,9 +10,14 @@ class SelectTest extends TestCase {
         $this->assertEquals('SELECT field', $select.'');
     }
 
-    public function test_toSql_WithMultipleField_ReturnsPartOfQuery() {
+    public function test_toSql_WithMultipleFields_ReturnsPartOfQuery() {
         $select = new Select(['field1', 'field2']);
         $this->assertEquals('SELECT field1, field2', $select.'');
+    }
+
+    public function test_toSql_WithMultipleAliasedFields_ReturnsPartOfQuery() {
+        $select = new Select(['f1' => 'field1', 'f2' => 'field2']);
+        $this->assertEquals('SELECT field1 AS f1, field2 AS f2', $select.'');
     }
     
     public function test_From_WithAllFieldAndTable_ReturnsFullQuery() {

@@ -19,7 +19,11 @@ class Select extends AbstractQuery implements QueryInterface {
     protected function parseValue($value, NamedValueBinder $generator)
     {
         if(is_array($value)) {
-            $value = implode(', ', $value);
+            $fields = [];
+            foreach($value as $alias => $field) {
+                $fields[] = $field . (!is_int($alias) ? ' AS ' . $alias : '');
+            }
+            $value = implode(', ', $fields);
         }
         return $value;
     }
