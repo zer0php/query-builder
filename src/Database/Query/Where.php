@@ -8,13 +8,8 @@ class Where extends AbstractQuery {
         $this->setValue($expr, $query);
     }
 
-    private function parseArray($field, array $values, NamedValueBinder $generator) {
-        $generator->bind($field, $values);
-        return $generator->getPlaceholder($field);
-    }
-
-    private function parseQuery(QueryInterface $query, NamedValueBinder $generator) {
-        return $query->toSql($generator);
+    protected function getType() {
+        return 'WHERE';
     }
 
     protected function parseValue($value, NamedValueBinder $generator) {
@@ -44,7 +39,12 @@ class Where extends AbstractQuery {
         return $value;
     }
 
-    protected function getType() {
-        return 'WHERE';
+    private function parseArray($field, array $values, NamedValueBinder $generator) {
+        $generator->bind($field, $values);
+        return $generator->getPlaceholder($field);
+    }
+
+    private function parseQuery(QueryInterface $query, NamedValueBinder $generator) {
+        return $query->toSql($generator);
     }
 }
