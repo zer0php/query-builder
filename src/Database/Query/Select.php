@@ -18,6 +18,9 @@ class Select extends AbstractQuery implements QueryInterface {
 
     protected function parseValue($value, NamedValueBinder $generator)
     {
+        if(is_array($value)) {
+            $value = implode(', ', $value);
+        }
         return $value;
     }
 }

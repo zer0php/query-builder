@@ -5,9 +5,14 @@ use Zero\Database\Query\Select;
 
 class SelectTest extends TestCase {
     
-    public function test_toSql_WithTable_ReturnsPartOfQuery() {
+    public function test_toSql_WithOneField_ReturnsPartOfQuery() {
         $select = new Select('field');
         $this->assertEquals('SELECT field', $select.'');
+    }
+
+    public function test_toSql_WithMultipleField_ReturnsPartOfQuery() {
+        $select = new Select(['field1', 'field2']);
+        $this->assertEquals('SELECT field1, field2', $select.'');
     }
     
     public function test_From_WithAllFieldAndTable_ReturnsFullQuery() {
