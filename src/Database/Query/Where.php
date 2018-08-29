@@ -14,29 +14,37 @@ class Where extends AbstractQuery {
 
     protected function parseValue($value, NamedValueBinder $generator) {
         if(is_array($value)) {
-            $conditions = [];
-            foreach($value as $field => $fieldValue) {
-                $expr = '';
-                $fieldParts = explode(' ', $field, 2);
-                if(count($fieldParts) === 2) {
-                    $field = $fieldParts[0];
-                    $expr .= $fieldParts[1] . ' ';
-                } else {
-                    $expr .= '= ';
-                }
-                if(is_array($fieldValue)) {
-                    $expr = 'IN ' . $this->parseArray($field, $fieldValue, $generator);
-                } else if($fieldValue instanceof QueryInterface) {
-                    $expr = 'IN (' . $this->parseQuery($fieldValue, $generator).')';
-                } else {
-                    $generator->bind($field, $fieldValue);
-                    $expr .= $generator->getPlaceholder($field);
-                }
-                $conditions[] = $field . ' ' . $expr;
-            }
-            $value = implode(' AND ', $conditions);
+            $value = $this->parseConditions($value, 'AND', $generator);
         }
         return $value;
+    }
+    
+    private function parseConditions(array $conditions, $conjugation, NamedValueBinder $generator) {
+        $parts = [];
+        foreach($conditions as $field => $fieldValue) {
+           $expr = '';
+           if($field === 'OR' || $field === 'AND') {
+               $parts[] = $this->parseConditions($fieldValue, $field, $generator);
+               continue;
+           }
+           $fieldParts = explode(' ', $field, 2);
+           if(count($fieldParts) === 2) {
+               $field = $fieldParts[0];
+               $expr .= $fieldParts[1] . ' ';
+           } else {
+               $expr .= '= ';
+           }
+           if(is_array($fieldValue)) {
+               $expr = 'IN ' . $this->parseArray($field, $fieldValue, $generator);
+           } else if($fieldValue instanceof QueryInterface) {
+               $expr = 'IN (' . $this->parseQuery($fieldValue, $generator).')';
+           } else {
+               $generator->bind($field, $fieldValue);
+               $expr .= $generator->getPlaceholder($field);
+           }
+           $parts[] = $field . ' ' . $expr;
+        }
+        return implode(' '.$conjugation.' ', $parts);
     }
 
     private function parseArray($field, array $values, NamedValueBinder $generator) {

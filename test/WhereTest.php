@@ -31,4 +31,9 @@ class WhereTest extends TestCase {
         $where = new Where(['name LIKE' => '%Joe%', 'age >' => 15, 'active' => 1]);
         $this->assertEquals('WHERE name LIKE :name AND age > :age AND active = :active', $where.'');
     }
+    
+    public function test_toSql_WithOrCondition_ReturnsPreparedPartOfQuery() {
+        $where = new Where(['OR' => ['name' => 'Joe', 'age <' => 15]]);
+        $this->assertEquals('WHERE name = :name OR age < :age', $where.'');
+    }
 } 
