@@ -53,6 +53,16 @@ class NamedValueBinderTest extends TestCase {
         $this->assertEquals(null, $this->valueBinder->getValue('id'));
     }
 
+    public function test_getValue_WithMultipleSameKey_ReturnsValue() {
+        $this->valueBinder->bind('id', 1);
+        $this->valueBinder->bind('id', 2);
+        $this->valueBinder->bind('id', 3);
+        $this->assertEquals(1, $this->valueBinder->getValue('id'));
+        $this->assertEquals(2, $this->valueBinder->getValue('id_1'));
+        $this->assertEquals(3, $this->valueBinder->getValue('id_2'));
+        $this->assertEquals(':id_2', $this->valueBinder->getPlaceholder('id_2'));
+    }
+
     public function test_getIterator_WithArrayValue_ReturnsValue() {
         $this->valueBinder->bind('id', [1]);
         $this->valueBinder->bind('name', 'Joe');

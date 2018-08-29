@@ -4,7 +4,7 @@ namespace Zero\Database\Query;
 
 use IteratorAggregate;
 
-class NamedValueBinder implements IteratorAggregate
+class NamedValueBinder implements ValueBinderInterface, IteratorAggregate
 {
     /**
      * @var array
@@ -17,13 +17,20 @@ class NamedValueBinder implements IteratorAggregate
     private $placeholders = [];
 
     /**
-     * @param $key
-     * @param $value
-     * @param string $type [optional] default: string
-     * @return self
+     * @var array
+     */
+    private $duplicatedCounts = [];
+
+    /**
+     * {@inheritDoc}
      */
     public function bind($key, $value, $type = 'string')
     {
+        if(isset($this->bindings[$key])) {
+            $index = $this->calculateDuplicatedIndex($key);
+            return $this->bind($key . '_' . $index, $value, $type);
+        }
+
         $param = str_replace('.', '_', $key);
         $placeholder = ':' . $param;
         if (is_array($value)) {
@@ -39,22 +46,19 @@ class NamedValueBinder implements IteratorAggregate
     }
 
     /**
-     * @param $key
-     * @return string|null
+     * {@inheritDoc}
      */
     public function getPlaceholder($key)
     {
         if (!isset($this->placeholders[$key])) {
             return null;
         }
-
         $placeholder = $this->placeholders[$key];
         return is_array($placeholder) ? '(' . implode(',', $placeholder) . ')' : $placeholder;
     }
 
     /**
-     * @param $key
-     * @return mixed|null
+     * {@inheritDoc}
      */
     public function getValue($key)
     {
@@ -84,5 +88,17 @@ class NamedValueBinder implements IteratorAggregate
             'value' => $value,
             'type' => $type
         ];
+    }
+
+    /**
+     * @param $key
+     * @return int
+     */
+    private function calculateDuplicatedIndex($key) {
+        if(!isset($this->duplicatedCounts[$key])) {
+            $this->duplicatedCounts[$key] = 0;
+        }
+        $this->duplicatedCounts[$key]++;
+        return $this->duplicatedCounts[$key];
     }
 }
