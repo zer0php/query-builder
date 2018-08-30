@@ -16,7 +16,7 @@ class Select extends AbstractQuery implements QueryInterface {
         return 'SELECT';
     }
 
-    protected function parseValue($value, NamedValueBinder $generator)
+    protected function parseValue($value, ValueBinderInterface $generator)
     {
         if(is_array($value)) {
             $fields = [];
